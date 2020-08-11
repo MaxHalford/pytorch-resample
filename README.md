@@ -65,6 +65,8 @@ The above dataset can be provided to a [`DataLoader`](https://pytorch.org/docs/s
 
 ```
 
+## Under-sampling
+
 The data stream can be under-sampled with the `pytorch_resample.UnderSampler` class. The latter is a wrapper that has to be provided with an `IterableDataset` and a desired class distribution. It inherits from `IterableDataset`, and may thus be used instead of the wrapped dataset. As an example, let's make it so that the classes are equally represented.
 
 ```py
@@ -92,6 +94,8 @@ The data stream can be under-sampled with the `pytorch_resample.UnderSampler` cl
 
 As shown, the observed class distribution is close to the specified distribution. Indeed, there are less 0s and 1s than above. Note that the values of the `desired_dist` parameter are not required to sum up to 1, as this is done for you automatically.
 
+## Over-sampling
+
 You may use `pytorch_resample.OverSampler` to instead oversample the data. It has the same signature as `pytorch_resample.UnderSampler`, and can thus be used in the exact same manner.
 
 ```py
@@ -116,6 +120,8 @@ You may use `pytorch_resample.OverSampler` to instead oversample the data. It ha
 ```
 
 In this case, the 1s and 2s have been oversampled.
+
+## Hybrid method
 
 The `pytorch_resample.HybridSampler` class can be used to compromise between under-sampling and over-sampling. It accepts an extra parameter called `sampling_rate`, which determines the percentage of data to use. This allows to control how much data is used for training, whilst ensuring that the class distribution follows the desired distribution.
 
@@ -180,3 +186,8 @@ $ pytest
 ## License
 
 The MIT License (MIT). Please see the [license file](LICENSE) for more information.
+
+<br>
+<div align="center">
+    <img src="riffle.jpg" width="40%">
+</div>
