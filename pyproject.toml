@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "pytorch_resample"
+version = "0.1.0"
+description = "Resampling methods for iterable datasets in PyTorch"
+authors = ["Max Halford <maxhalford25@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.6.1"
+torch = "^1.6.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.4"
