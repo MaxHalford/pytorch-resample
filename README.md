@@ -189,5 +189,5 @@ The MIT License (MIT). Please see the [license file](LICENSE) for more informati
 
 <br>
 <div align="center">
-    <img src="riffle.jpg" width="40%">
+    <img src="riffle.jpg" width="60%">
 </div>
