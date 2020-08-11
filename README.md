@@ -12,7 +12,7 @@ Rebalancing a dataset is one way to deal with class imbalance. This can be done 
 
 PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data-loading-order-and-sampler) for rebalancing a dataset, but they are limited to batch datasets of known length (i.e., they require a dataset to have a `__len__` method). Community contributions such as [ufoym/imbalanced-dataset-sampler](https://github.com/ufoym/imbalanced-dataset-sampler) are cute, but they also only work with batch datasets (also called *map-style* datasets in PyTorch jargon). There's also a [GitHub issue](https://github.com/pytorch/pytorch/issues/28743) opened on the pytorch/pytorch repository, but it doesn't seem very active.
 
-This repository thus implements data resamplers that work with [`IterableDataset`s](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset), which were added in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. They all work for binary classification as well as multi-class classification.
+This repository thus implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. They all work for binary classification as well as multi-class classification.
 
 ## Installation
 
