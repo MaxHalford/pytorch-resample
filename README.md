@@ -14,6 +14,12 @@ PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data
 
 This repository thus implements data resamplers that work with [`IterableDataset`s](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset), which were added in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. They all work for binary classification as well as multi-class classification.
 
+## Installation
+
+```sh
+$ pip install pytorch_resample
+```
+
 ## Usage
 
 As a running example, we'll define an `IterableDataset` that iterates over the output of scikit-learn's [`make_classification`](https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_classification.html) function.
