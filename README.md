@@ -1,4 +1,4 @@
-# PyTorch resampling methods
+# Iterable dataset resampling in PyTorch
 
 ## Motivation
 
