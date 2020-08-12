@@ -1,4 +1,4 @@
-# PyTorch resampling methods
+# Streaming dataset resampling in PyTorch
 
 ## Motivation
 
