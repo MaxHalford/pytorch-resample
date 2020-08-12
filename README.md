@@ -12,7 +12,7 @@ Rebalancing a dataset is one way to deal with class imbalance. This can be done 
 
 PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data-loading-order-and-sampler) for rebalancing a dataset, but they are limited to batch datasets of known length (i.e., they require a dataset to have a `__len__` method). Community contributions such as [ufoym/imbalanced-dataset-sampler](https://github.com/ufoym/imbalanced-dataset-sampler) are cute, but they also only work with batch datasets (also called *map-style* datasets in PyTorch jargon). There's also a [GitHub issue](https://github.com/pytorch/pytorch/issues/28743) opened on the pytorch/pytorch repository, but it doesn't seem very active.
 
-This repository thus implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. They all work for binary classification as well as multi-class classification.
+This repository thus implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. Each methods works for both binary and multi-class classification.
 
 ## Installation
 
@@ -172,6 +172,10 @@ It's possible to determine the exact number of samples each resampler will strea
 ## Performance tip
 
 By design `UnderSampler` and `HybridSampler` yield repeated samples one after the other. This might not be ideal, as it is usually desirable to diversify the samples within each batch. We therefore recommend that you use a [shuffling buffer](https://www.moderndescartes.com/essays/shuffle_viz/), such as the `ShuffleDataset` class proposed [here](https://discuss.pytorch.org/t/how-to-shuffle-an-iterable-dataset/64130/6).
+
+## How does it work?
+
+As far as I know, the methods that are implemented in this package do not exist in the litterature. I first [stumbled](https://maxhalford.github.io/blog/undersampling-ratios/) on the under-sampling method by myself, which turned out to be equivalent to [rejection sampling](https://www.wikiwand.com/en/Rejection_sampling). I then worked out the necessary formulas for over-sampling and the hybrid method. Both of the latter are based on the idea of sampling from a Poisson distribution, which I took from the [*Online Bagging and Boosting* paper](https://ti.arc.nasa.gov/m/profile/oza/files/ozru01a.pdf) by Nikunj Oza and Stuart Russell. The innovation lies in the determination of the rate that satisfies the desired class distribution.
 
 ## Development
 
