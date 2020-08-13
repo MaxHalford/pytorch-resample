@@ -1,4 +1,17 @@
-# Iterable dataset resampling in PyTorch
+<h1>Iterable dataset resampling in PyTorch</h1>
+
+- [Motivation](#motivation)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Under-sampling](#under-sampling)
+  - [Over-sampling](#over-sampling)
+  - [Hybrid method](#hybrid-method)
+  - [Expected number of samples](#expected-number-of-samples)
+  - [Performance tip](#performance-tip)
+- [Benchmarks](#benchmarks)
+- [How does it work?](#how-does-it-work)
+- [Development](#development)
+- [License](#license)
 
 ## Motivation
 
@@ -65,7 +78,7 @@ The above dataset can be provided to a [`DataLoader`](https://pytorch.org/docs/s
 
 ```
 
-## Under-sampling
+### Under-sampling
 
 The data stream can be under-sampled with the `pytorch_resample.UnderSampler` class. The latter is a wrapper that has to be provided with an `IterableDataset` and a desired class distribution. It inherits from `IterableDataset`, and may thus be used instead of the wrapped dataset. As an example, let's make it so that the classes are equally represented.
 
@@ -94,7 +107,7 @@ The data stream can be under-sampled with the `pytorch_resample.UnderSampler` cl
 
 As shown, the observed class distribution is close to the specified distribution. Indeed, there are less 0s and 1s than above. Note that the values of the `desired_dist` parameter are not required to sum up to 1, as this is done for you automatically.
 
-## Over-sampling
+### Over-sampling
 
 You may use `pytorch_resample.OverSampler` to instead oversample the data. It has the same signature as `pytorch_resample.UnderSampler`, and can thus be used in the exact same manner.
 
@@ -121,7 +134,7 @@ You may use `pytorch_resample.OverSampler` to instead oversample the data. It ha
 
 In this case, the 1s and 2s have been oversampled.
 
-## Hybrid method
+### Hybrid method
 
 The `pytorch_resample.HybridSampler` class can be used to compromise between under-sampling and over-sampling. It accepts an extra parameter called `sampling_rate`, which determines the percentage of data to use. This allows to control how much data is used for training, whilst ensuring that the class distribution follows the desired distribution.
 
@@ -149,7 +162,7 @@ The `pytorch_resample.HybridSampler` class can be used to compromise between und
 
 As can be observed, the amount of streamed samples is close to 5000, which is half the size of the dataset.
 
-## Expected number of samples
+### Expected number of samples
 
 It's possible to determine the exact number of samples each resampler will stream back in advance, provided the class distribution of the data is known.
 
@@ -169,7 +182,7 @@ It's possible to determine the exact number of samples each resampler will strea
 
 ```
 
-## Performance tip
+### Performance tip
 
 By design `UnderSampler` and `HybridSampler` yield repeated samples one after the other. This might not be ideal, as it is usually desirable to diversify the samples within each batch. We therefore recommend that you use a [shuffling buffer](https://www.moderndescartes.com/essays/shuffle_viz/), such as the `ShuffleDataset` class proposed [here](https://discuss.pytorch.org/t/how-to-shuffle-an-iterable-dataset/64130/6).
 
