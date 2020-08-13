@@ -4,3 +4,4 @@
 .vscode
 dist/
 .DS_Store
+*.csv
