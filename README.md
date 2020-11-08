@@ -25,7 +25,7 @@ Rebalancing a dataset is one way to deal with class imbalance. This can be done 
 
 PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data-loading-order-and-sampler) for rebalancing a dataset, but they are limited to batch datasets of known length (i.e., they require a dataset to have a `__len__` method). Community contributions such as [ufoym/imbalanced-dataset-sampler](https://github.com/ufoym/imbalanced-dataset-sampler) are cute, but they also only work with batch datasets (also called *map-style* datasets in PyTorch jargon). There's also a [GitHub issue](https://github.com/pytorch/pytorch/issues/28743) opened on the pytorch/pytorch repository, but it doesn't seem very active.
 
-This repository thus implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. Each methods works for both binary and multi-class classification.
+This repository implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). Each data resampler also inherits from `IterableDataset`. The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. Each methods works for both binary and multi-class classification.
 
 ## Installation
 
@@ -84,12 +84,16 @@ The data stream can be under-sampled with the `pytorch_resample.UnderSampler` cl
 
 ```py
 >>> import pytorch_resample
+>>> import torch
 
 >>> sample = pytorch_resample.UnderSampler(
 ...     dataset=dataset,
 ...     desired_dist={0: .33, 1: .33, 2: .33},
 ...     seed=42
 ... )
+
+>>> isinstance(sample, torch.utils.data.IterableDataset)
+True
 
 >>> y_dist = collections.Counter()
 
@@ -118,6 +122,9 @@ You may use `pytorch_resample.OverSampler` to instead oversample the data. It ha
 ...     seed=42
 ... )
 
+>>> isinstance(sample, torch.utils.data.IterableDataset)
+True
+
 >>> y_dist = collections.Counter()
 
 >>> batches = torch.utils.data.DataLoader(sample, batch_size=16)
@@ -145,6 +152,9 @@ The `pytorch_resample.HybridSampler` class can be used to compromise between und
 ...     sampling_rate=.5,  # use 50% of the dataset
 ...     seed=42
 ... )
+
+>>> isinstance(sample, torch.utils.data.IterableDataset)
+True
 
 >>> y_dist = collections.Counter()
 
