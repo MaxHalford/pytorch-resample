@@ -23,9 +23,11 @@ Rebalancing a dataset is one way to deal with class imbalance. This can be done 
 2. over-sampling rare classes.
 3. doing a mix of both.
 
-PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data-loading-order-and-sampler) for rebalancing a dataset, but they are limited to batch datasets of known length (i.e., they require a dataset to have a `__len__` method). Community contributions such as [ufoym/imbalanced-dataset-sampler](https://github.com/ufoym/imbalanced-dataset-sampler) are cute, but they also only work with batch datasets (also called *map-style* datasets in PyTorch jargon). There's also a [GitHub issue](https://github.com/pytorch/pytorch/issues/28743) opened on the pytorch/pytorch repository, but it doesn't seem very active.
+PyTorch provides [some utilities](https://pytorch.org/docs/stable/data.html#data-loading-order-and-sampler) for rebalancing a dataset, but they are limited to batch datasets of known length (i.e., they require a dataset to have a `__len__` method). Community contributions such as [ufoym/imbalanced-dataset-sampler](https://github.com/ufoym/imbalanced-dataset-sampler) are cute, but they also only work with batch datasets (also called *map-style* datasets in PyTorch jargon). There's also a [GitHub issue](https://github.com/pytorch/pytorch/issues/28743) opened on the PyTorch GitHub repository, but it doesn't seem very active.
 
 This repository implements data resamplers that wrap an [`IterableDataset`](https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset). Each data resampler also inherits from `IterableDataset`. The latter was added to PyTorch in [this pull request](https://github.com/pytorch/pytorch/pull/19228). In particular, the provided methods do not require you to have to know the size of your dataset in advance. Each methods works for both binary and multi-class classification.
+
+☝️ If you're looking to sample your data completely at random, without taking into consideration the class distribution, then we recommend that you do it yourself in your `IterableDataset` implementation. Indeed, you just have to generate a random number between 0 and 1 and keep a sample if the sampled number is under a given threshold. This library is meant to be used when you want to use resampling to balance your class distribution.
 
 ## Installation
 
@@ -71,7 +73,8 @@ The above dataset can be provided to a [`DataLoader`](https://pytorch.org/docs/s
 ...     y_dist.update(yb.numpy())
 
 >>> for label in sorted(y_dist):
-...     print(f'• {label}: {y_dist[label] / sum(y_dist.values()):.2%} ({y_dist[label]})')
+...     frequency = y_dist[label] / sum(y_dist.values())
+...     print(f'• {label}: {frequency:.2%} ({y_dist[label]})')
 • 0: 49.95% (4995)
 • 1: 39.88% (3988)
 • 2: 10.17% (1017)
@@ -102,7 +105,8 @@ True
 ...     y_dist.update(yb.numpy())
 
 >>> for label in sorted(y_dist):
-...     print(f'• {label}: {y_dist[label] / sum(y_dist.values()):.2%} ({y_dist[label]})')
+...     frequency = y_dist[label] / sum(y_dist.values())
+...     print(f'• {label}: {frequency:.2%} ({y_dist[label]})')
 • 0: 33.30% (1007)
 • 1: 33.10% (1001)
 • 2: 33.60% (1016)
@@ -132,7 +136,8 @@ True
 ...     y_dist.update(yb.numpy())
 
 >>> for label in sorted(y_dist):
-...     print(f'• {label}: {y_dist[label] / sum(y_dist.values()):.2%} ({y_dist[label]})')
+...     frequency = y_dist[label] / sum(y_dist.values())
+...     print(f'• {label}: {frequency:.2%} ({y_dist[label]})')
 • 0: 33.21% (4995)
 • 1: 33.01% (4965)
 • 2: 33.78% (5080)
@@ -163,7 +168,8 @@ True
 ...     y_dist.update(yb.numpy())
 
 >>> for label in sorted(y_dist):
-...     print(f'• {label}: {y_dist[label] / sum(y_dist.values()):.2%} ({y_dist[label]})')
+...     frequency = y_dist[label] / sum(y_dist.values())
+...     print(f'• {label}: {frequency:.2%} ({y_dist[label]})')
 • 0: 33.01% (1672)
 • 1: 32.91% (1667)
 • 2: 34.08% (1726)
@@ -202,11 +208,13 @@ I've written a [simple benchmark](benchmarks.ipynb) to verify that resampling br
 
 ## How does it work?
 
-As far as I know, the methods that are implemented in this package do not exist in the litterature. I first [stumbled](https://maxhalford.github.io/blog/undersampling-ratios/) on the under-sampling method by myself, which turned out to be equivalent to [rejection sampling](https://www.wikiwand.com/en/Rejection_sampling). I then worked out the necessary formulas for over-sampling and the hybrid method. Both of the latter are based on the idea of sampling from a Poisson distribution, which I took from the [*Online Bagging and Boosting* paper](https://ti.arc.nasa.gov/m/profile/oza/files/ozru01a.pdf) by Nikunj Oza and Stuart Russell. The innovation lies in the determination of the rate that satisfies the desired class distribution.
+As far as I know, the methods that are implemented in this package do not exist in the litterature per se. I first [stumbled](https://maxhalford.github.io/blog/undersampling-ratios/) on the under-sampling method by myself, which turned out to be equivalent to [rejection sampling](https://www.wikiwand.com/en/Rejection_sampling). I then worked out the necessary formulas for over-sampling and the hybrid method. Both of the latter are based on the idea of sampling from a Poisson distribution, which I took from the [*Online Bagging and Boosting* paper](https://ti.arc.nasa.gov/m/profile/oza/files/ozru01a.pdf) by Nikunj Oza and Stuart Russell. The innovation lies in the determination of the rate that satisfies the desired class distribution.
 
 ## Development
 
 ```sh
+$ git clone https://github.com/MaxHalford/pytorch-resample
+$ cd pytorch-resample
 $ python -m venv .env
 $ source .env/bin/activate
 $ pip install poetry

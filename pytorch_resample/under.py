@@ -12,7 +12,8 @@ class UnderSampler(torch.utils.data.IterableDataset):
     Parameters:
         dataset
         desired_dist: The desired class distribution. The keys are the classes whilst the
-            values are the desired class percentages. The values must sum up to 1.
+            values are the desired class percentages. The values are normalised so that sum up
+            to 1.
         seed: Random seed for reproducibility.
 
     Attributes:

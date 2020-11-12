@@ -12,7 +12,8 @@ class HybridSampler(torch.utils.data.IterableDataset):
     Parameters:
         dataset
         desired_dist: The desired class distribution. The keys are the classes whilst the
-            values are the desired class percentages. The values must sum up to 1.
+            values are the desired class percentages. The values are normalised so that sum up
+            to 1.
         sampling_rate: The fraction of data to use.
         seed: Random seed for reproducibility.
 
@@ -44,7 +45,14 @@ class HybridSampler(torch.utils.data.IterableDataset):
             f = self.desired_dist
             g = self.actual_dist
 
+            print(f)
+            print(g)
+
             rate = self.sampling_rate * f[y] / (g[y] / self._n)
+
+            print(rate)
+
+            raise ValueError
 
             for _ in range(utils.random_poisson(rate, rng=self.rng)):
                 yield x, y
