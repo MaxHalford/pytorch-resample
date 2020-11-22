@@ -45,12 +45,7 @@ class HybridSampler(torch.utils.data.IterableDataset):
             f = self.desired_dist
             g = self.actual_dist
 
-            print(f)
-            print(g)
-
             rate = self.sampling_rate * f[y] / (g[y] / self._n)
-
-            print(rate)
 
             raise ValueError
 
