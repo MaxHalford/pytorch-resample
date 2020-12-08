@@ -47,8 +47,6 @@ class HybridSampler(torch.utils.data.IterableDataset):
 
             rate = self.sampling_rate * f[y] / (g[y] / self._n)
 
-            raise ValueError
-
             for _ in range(utils.random_poisson(rate, rng=self.rng)):
                 yield x, y
 
