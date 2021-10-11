@@ -14,6 +14,7 @@ class OverSampler(torch.utils.data.IterableDataset):
         desired_dist: The desired class distribution. The keys are the classes whilst the
             values are the desired class percentages. The values are normalised so that sum up
             to 1.
+        buffer_size: Size of the buffer.
         seed: Random seed for reproducibility.
 
     Attributes:
@@ -23,15 +24,17 @@ class OverSampler(torch.utils.data.IterableDataset):
     """
 
     def __init__(self, dataset: torch.utils.data.IterableDataset, desired_dist: dict,
-                 seed: int = None):
+                 buffer_size: int = None, seed: int = None):
 
         self.dataset = dataset
         self.desired_dist = {c: p / sum(desired_dist.values()) for c, p in desired_dist.items()}
+        self.buffer_size = buffer_size
         self.seed = seed
 
         self.actual_dist = collections.Counter()
         self.rng = random.Random(seed)
         self._pivot = None
+        self._buffer = {c: list() for c in desired_dist}
 
     def __iter__(self):
 
@@ -42,6 +45,11 @@ class OverSampler(torch.utils.data.IterableDataset):
             # To ease notation
             f = self.desired_dist
             g = self.actual_dist
+
+            # Add to buffer
+            if self.buffer_size is not None:
+                self._buffer[y].append(x)
+                self._buffer[y] = self._buffer[y][-self.buffer_size:]
 
             # Check if the pivot needs to be changed
             if y != self._pivot:
@@ -55,7 +63,10 @@ class OverSampler(torch.utils.data.IterableDataset):
             rate = M * f[y] / g[y]
 
             for _ in range(utils.random_poisson(rate, rng=self.rng)):
-                yield x, y
+                if self.buffer_size is None:
+                    yield x, y
+                else:
+                    yield self.rng.choice(self._buffer[y]), y
 
     @classmethod
     def expected_size(cls, n, desired_dist, actual_dist):
