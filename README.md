@@ -219,6 +219,7 @@ $ python -m venv .env
 $ source .env/bin/activate
 $ pip install poetry
 $ poetry install
+$ poetry shell
 $ pytest
 ```
 
